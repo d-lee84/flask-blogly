@@ -1,5 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'user_form.html' %}
 
-{% block content %}
+{% block form_header %}
+    <h1>Edit a user</h1>
+    <form action="/users/{{ user.user_id }}/edit"  method="POST">
+{% endblock %}
+
+{% block buttons %}
+    <a href="/users/{{ user.user_id }}" class="btn btn-outline-primary">Cancel</button>
+    <button type="submit" class="btn btn-success">Save</button>
+{% endblock %}
 
 {% endblock %}

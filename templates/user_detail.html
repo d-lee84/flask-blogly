@@ -2,4 +2,11 @@
 
 {% block content %}
 
+<img src="{{ user.image_url }}" alt="user_img">
+<h2>{{ user.first_name }} {{ user.last_name }}</h2>
+<a role="button" href="/users/{{ user.id }}/edit" class="btn btn-secondary">Edit</a>
+<form action="/users/{{ user.id }}/delete" method="POST">
+    <button role="button" class="btn btn-danger" type="submit">Delete</button>
+</form>
+
 {% endblock %}
