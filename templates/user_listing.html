@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="card-title">Users:</h1>
+<ul class="">
+    {% for user in users %}
+        <li class=""> {{ user.first_name }} {{user.last_name}} </li>
+    {% endfor %}
+</ul>
+<a href="/users/new" class="btn btn-primary" role="button">Add User</a>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- The following line of code was copied from bootswatch https://www.bootstrapcdn.com/bootswatch/ to import bootswatch darkly theme for Bootstrap. -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css">
+    <title>Blogly</title>
+</head>
+
+<body>
+    <main class="d-flex justify-content-center">
+
+        <div class="mt-4 card col-8">
+            <div class="card-body col">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+
+    </main>
+</body>
+
+</html>
