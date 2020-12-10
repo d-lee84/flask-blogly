@@ -16,14 +16,14 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    id = db.Columns(db.Integer,
+    id = db.Column(db.Integer,
                     primary_key=True,
                     autoincrement=True)
-    first_name = db.Columns(db.String(50),
+    first_name = db.Column(db.String(50),
                             nullable=False)
-    last_name = db.Columns(db.String(50),
+    last_name = db.Column(db.String(50),
                            nullable=False,
                            default='')
-    image_url = db.Columns(db.String,
+    image_url = db.Column(db.String,
                            nullable=False,
                            default="/static/default_profile.jpg")

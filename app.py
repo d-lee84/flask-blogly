@@ -90,7 +90,7 @@ def delete_user_then_redirect(user_id):
 def get_form_data():
     """ Grab form data and return as a list. """
     profile_img = request.form.get('img_url')
-    profile_img = profile_img if profile_img else None
+    profile_img = profile_img if profile_img else "/static/default_profile.jpg"
 
     return [request.form.get('first_name'),
             request.form.get('last_name'),
