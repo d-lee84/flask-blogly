@@ -17,13 +17,33 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer,
-                    primary_key=True,
-                    autoincrement=True)
+                   primary_key=True,
+                   autoincrement=True)
     first_name = db.Column(db.String(50),
-                            nullable=False)
+                           nullable=False)
     last_name = db.Column(db.String(50),
-                           nullable=False,
-                           default='')
+                          nullable=False,
+                          default='')
     image_url = db.Column(db.String,
+                          nullable=False,
+                          default="/static/default_profile.jpg")
+
+
+class Post(db.Model):
+    """ Posts in the blog website """
+
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer,
+                   primary_key=True,
+                   autoincrement=True)
+    title = db.Column(db.String(50),
+                      nullable=False,
+                      unique=True)
+    content = db.Column(db.Text,
+                        nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False,
-                           default="/static/default_profile.jpg")
+                           server_default=db.sql.func.now())
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey("users.id"))
