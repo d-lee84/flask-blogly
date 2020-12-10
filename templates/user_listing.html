@@ -4,7 +4,7 @@
 <h1 class="card-title">Users:</h1>
 <ul class="">
     {% for user in users %}
-        <li class=""> {{ user.first_name }} {{user.last_name}} </li>
+        <li class=""> <a href="/users/{{ user.id }}">{{ user.first_name }} {{user.last_name}}</a> </li>
     {% endfor %}
 </ul>
 <a href="/users/new" class="btn btn-primary" role="button">Add User</a>
