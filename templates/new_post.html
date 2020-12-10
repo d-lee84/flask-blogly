@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="card-title">Add post for {{user.first_name}} {{user.last_name}}</h1>
+<form action="/users/{{user.id}}/posts/new" method="POST">
+
+    {% include '_post_inputs.html' %}
+    <a href="/users/{{ user.id }}" class="btn btn-outline-info">Cancel</a>
+    <button type="submit" class="btn btn-success">Add</button>
+</form>
+{% endblock %}

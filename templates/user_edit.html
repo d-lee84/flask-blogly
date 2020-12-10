@@ -1,15 +1,14 @@
 {% extends 'user_form.html' %}
 
 {% block form_header %}
-    <h1>Edit a user</h1>
+    <h1 class="card-title">Edit a user</h1>
     <form action="/users/{{ user.id }}/edit"  method="POST">
 {% endblock %}
 
 {% block buttons %}
-    <a href="/users/{{ user.id }}" class="btn btn-outline-primary">Cancel</a>
+    <a href="/users/{{ user.id }}" class="btn btn-outline-info">Cancel</a>
     <button type="submit" class="btn btn-success">Save</button>
 {% endblock %}
 
 <!-- Jinja Comment -->
 {#{% include '_user_form.html' %}#}
-

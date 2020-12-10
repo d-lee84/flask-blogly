@@ -1,0 +1,7 @@
+<label for="post_title">Post Title</label>
+<input id="post_title" name="post_title" type="text" value="{{ post.title }}" required placeholder="Enter a Post Title"
+    maxlength="50">
+
+<label for="post_content">Post Content</label>
+<textarea id="post_content" name="post_content" rows="5" cols="33"
+    placeholder="Enter the content of your post."> {{ post.content }} </textarea>
