@@ -46,7 +46,7 @@ class Post(db.Model):
                         nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False,
-                           server_default=db.sql.func.now())
+                           server_default=db.func.now())
     user_id = db.Column(db.Integer,
                         db.ForeignKey("users.id"))
 
