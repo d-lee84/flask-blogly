@@ -26,7 +26,7 @@ class User(db.Model):
                           default='')
     image_url = db.Column(db.String,
                           nullable=False,
-                          default="/static/default_profile.jpg")
+                          server_default="/static/default_profile.jpg")
     posts = db.relationship('Post')
 
 

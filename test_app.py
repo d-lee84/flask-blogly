@@ -137,7 +137,6 @@ class BloglyTestCase(TestCase):
             self.assertIn('Created by unittest', html)
             self.assertIn('Tony Stark', html)
 
-
     def test_post_edit(self):
         with app.test_client() as client:
             response = client.post(f'/posts/{self.test_post2.id}/edit',

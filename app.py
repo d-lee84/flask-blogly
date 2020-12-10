@@ -116,7 +116,7 @@ def show_new_post_form(user_id):
 def save_new_post_then_redirect(user_id):
     """ Save new post then redirect
         to user details page """
-    user = User.query.get_or_404(user_id)
+    User.query.get_or_404(user_id)
 
     post_title, post_content = get_post_data(request.form)
 
@@ -130,22 +130,20 @@ def save_new_post_then_redirect(user_id):
 
     return redirect(f"/users/{user_id}")
 
+########## Post Routes ##########
 
 @app.route("/posts/<int:post_id>")
 def show_post_details(post_id):
     """ Shows the details about the post """
     post = Post.query.get_or_404(post_id)
-    user = User.query.get_or_404(post.user_id)
-    return render_template("post_detail.html", post=post, user=user)
+    return render_template("post_detail.html", post=post)
 
 
 @app.route("/posts/<int:post_id>/edit")
 def show_post_edit_form(post_id):
     """ Shows the edit form for the posts """
     post = Post.query.get_or_404(post_id)
-    user = User.query.get_or_404(post.user_id)
-
-    return render_template("post_edit.html", post=post, user=user)
+    return render_template("post_edit.html", post=post)
 
 
 @app.route("/posts/<int:post_id>/edit", methods=['POST'])
@@ -168,23 +166,20 @@ def save_post_edits_then_redirect(post_id):
 def delete_post_then_redirect(post_id):
     """ Delete the post then redirect to the user details """
     post = Post.query.get_or_404(post_id)
-    user_id = post.user_id
 
     db.session.delete(post)
     db.session.commit()
 
-    return redirect(f"/users/{user_id}")
+    return redirect(f"/users/{post.user_id}")
 
 
 def get_user_data(user_data):
     """ Grab user form data and return as a list. """
-    first_name = user_data.get('first_name')
-    first_name = first_name if first_name else None
+    first_name = user_data.get('first_name') or None
 
     last_name = user_data.get('last_name')
 
-    profile_img = user_data.get('img_url')
-    profile_img = profile_img if profile_img else "/static/default_profile.jpg"
+    profile_img = user_data.get('img_url') or "/static/default_profile.jpg"
 
     return [first_name,
             last_name,
@@ -193,11 +188,8 @@ def get_user_data(user_data):
 
 def get_post_data(post_data):
     """ Grab post form data and return as a list. """
-    post_title = post_data.get('post_title')
-    post_title = post_title if post_title else None
-
-    post_content = post_data.get('post_content')
-    post_content = post_content if post_content else None
+    post_title = post_data.get('post_title') or None
+    post_content = post_data.get('post_content') or None
 
     return [post_title,
             post_content]
