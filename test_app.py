@@ -62,7 +62,6 @@ class BloglyTestCase(TestCase):
             self.assertIn("<ul", html)
             self.assertIn("Add User", html)
 
-# Test /users/edit, /users/delete
 
     def test_create_new_user_follow(self):
         """ Test that user can be correctly created
@@ -89,3 +88,22 @@ class BloglyTestCase(TestCase):
             response = client.get(f'/users/{self.test_id }')
             html = response.get_data(as_text=True)
             self.assertIn("Tony Hawk", html)
+
+    def test_user_edit_form(self):
+        """ Test that user edit form shows the 
+            first and last  name of the user"""
+        with app.test_client() as client:
+            response = client.get(f'/users/{self.test_id }/edit')
+            html = response.get_data(as_text=True)
+            self.assertIn('value="Tony"', html)
+            self.assertIn('value="Hawk"', html)
+
+
+    # Test /users/edit, /users/delete
+    # def test_user_edit(self):
+    #     """ Test that user can be correctly created
+    #         and displayed in the /users route"""
+    #     with app.test_client() as client:
+    #         response = client.get(f'/users/{self.test_id }')
+    #         html = response.get_data(as_text=True)
+    #         self.assertIn("Tony Hawk", html)

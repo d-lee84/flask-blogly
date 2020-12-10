@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask_debugtoolbar import DebugToolbarExtension
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, flash
 from models import db, connect_db, User
 
 app = Flask(__name__)
@@ -41,8 +41,13 @@ def save_new_user_then_redirect():
     """ Handles create new user form submission,
     saves that new user to the database,
     then redirects to /users. """
-    first_name, last_name, image_url = get_form_data()
+    first_name, last_name, image_url = get_form_data(request.form)
     # save to database
+
+    if user.first_name is None:
+        flash('The first name is required')
+        return redirect("/users/new")
+
     new_user = User(
         first_name=first_name,
         last_name=last_name,
@@ -56,14 +61,14 @@ def save_new_user_then_redirect():
 @app.route("/users/<int:user_id>")
 def show_user_details(user_id):
     """ Shows information about a user. """
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     return render_template("user_detail.html", user=user)
 
 
 @app.route("/users/<int:user_id>/edit")
-def show_user_edit_page(user_id):
+def show_user_edit_form(user_id):
     """ Shows the user edit page for a given User id. """
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     return render_template("user_edit.html", user=user)
 
 
@@ -71,8 +76,13 @@ def show_user_edit_page(user_id):
 def save_user_edits_then_redirect(user_id):
     """ Saves user edits into the database,
     then redirects to users list. """
-    user = User.query.get(user_id)
-    user.first_name, user.last_name, user.image_url = get_form_data()
+    user = User.query.get_or_404(user_id)
+    user.first_name, user.last_name, user.image_url = get_form_data(request.form)
+
+    if user.first_name is None:
+        flash('The first name is required')
+        return redirect(f"/users/{user_id}/edit")
+
     db.session.commit()
     return redirect("/users")
 
@@ -81,17 +91,22 @@ def save_user_edits_then_redirect(user_id):
 def delete_user_then_redirect(user_id):
     """ Deletes the user for the given id,
     then redirects to users list. """
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
     return redirect("/users")
 
 
-def get_form_data():
+def get_form_data(user_data):
     """ Grab form data and return as a list. """
-    profile_img = request.form.get('img_url')
+    first_name = user_data.get('first_name')
+    first_name = first_name if first_name else None
+
+    last_name = user_data.get('last_name')
+
+    profile_img = user_data.get('img_url')
     profile_img = profile_img if profile_img else "/static/default_profile.jpg"
 
-    return [request.form.get('first_name'),
-            request.form.get('last_name'),
+    return [first_name,
+            last_name,
             profile_img]
