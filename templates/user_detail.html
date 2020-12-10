@@ -17,5 +17,6 @@
         <li> <a href="/posts/{{ post.id }}"> {{ post.title }} </a></li>
         {% endfor %}
     </ul>
+    <a href="/users/{{ user.id }}/posts/new" role="button" class="btn btn-primary" type="submit">Add Post</a>
 </div>
 {% endblock %}

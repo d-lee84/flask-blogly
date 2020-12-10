@@ -33,7 +33,7 @@ def show_users_list():
 @app.route("/users/new")
 def show_create_user_page():
     """ Shows create user form page. """
-    return render_template("new_user.html")
+    return render_template("new_user.html", user="")
 
 
 @app.route("/users/new", methods=["POST"])
@@ -78,7 +78,8 @@ def save_user_edits_then_redirect(user_id):
     """ Saves user edits into the database,
     then redirects to users list. """
     user = User.query.get_or_404(user_id)
-    user.first_name, user.last_name, user.image_url = get_user_data(request.form)
+    user.first_name, user.last_name, user.image_url = get_user_data(
+        request.form)
 
     if user.first_name is None:
         flash('The first name is required')
@@ -93,6 +94,9 @@ def delete_user_then_redirect(user_id):
     """ Deletes the user for the given id,
     then redirects to users list. """
     user = User.query.get_or_404(user_id)
+    if user.posts:
+        flash("Cannot delete user with posts.")
+        return redirect(f"/users/{user_id}")
     db.session.delete(user)
     db.session.commit()
     return redirect("/users")
@@ -103,7 +107,9 @@ def show_new_post_form(user_id):
     """ Shows the form for new posts """
     user = User.query.get_or_404(user_id)
 
-    return render_template('new_post.html', user=user)
+    return render_template('new_post.html',
+                           user=user,
+                           post={"title": "", "content": ""})
 
 
 @app.route("/users/<int:user_id>/posts/new", methods=["POST"])
@@ -115,9 +121,8 @@ def save_new_post_then_redirect(user_id):
     post_title, post_content = get_post_data(request.form)
 
     if None in (post_title, post_content):
-        flash("Posts must have a title and content")
+        flash("Posts must have both: title and content")
         return redirect(f'/users/{user_id}/posts/new')
-
     post = Post(title=post_title, content=post_content, user_id=user_id)
 
     db.session.add(post)

@@ -27,7 +27,6 @@ class User(db.Model):
     image_url = db.Column(db.String,
                           nullable=False,
                           default="/static/default_profile.jpg")
-
     posts = db.relationship('Post')
 
 
@@ -40,14 +39,13 @@ class Post(db.Model):
                    primary_key=True,
                    autoincrement=True)
     title = db.Column(db.String(50),
-                      nullable=False,
-                      unique=True)
+                      nullable=False)
     content = db.Column(db.Text,
                         nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False,
                            server_default=db.func.now())
     user_id = db.Column(db.Integer,
-                        db.ForeignKey("users.id"))
-
+                        db.ForeignKey("users.id"),
+                        nullable=False)
     user = db.relationship('User')
