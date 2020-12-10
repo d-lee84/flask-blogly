@@ -28,6 +28,8 @@ class User(db.Model):
                           nullable=False,
                           default="/static/default_profile.jpg")
 
+    posts = db.relationship('Post')
+
 
 class Post(db.Model):
     """ Posts in the blog website """
@@ -47,3 +49,5 @@ class Post(db.Model):
                            server_default=db.sql.func.now())
     user_id = db.Column(db.Integer,
                         db.ForeignKey("users.id"))
+
+    user = db.relationship('User')
