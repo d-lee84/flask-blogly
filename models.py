@@ -52,7 +52,7 @@ class Post(db.Model):
 
     tags = db.relationship('Tag',
                            secondary="posts_tags",
-                           bref="posts")
+                           backref="posts")
 
 
 class Tag(db.Model):

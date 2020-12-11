@@ -2,6 +2,7 @@
 
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, request, redirect, render_template, flash
+# from flask_sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, Post, Tag
 
 app = Flask(__name__)
@@ -104,6 +105,8 @@ def delete_user_then_redirect(user_id):
     return redirect("/users")
 
 
+########## Post Routes ##########
+
 @app.route("/users/<int:user_id>/posts/new")
 def show_new_post_form(user_id):
     """ Shows the form for new posts """
@@ -111,7 +114,8 @@ def show_new_post_form(user_id):
 
     return render_template('new_post.html',
                            user=user,
-                           post={"title": "", "content": ""})
+                           post={"title": "", "content": "", "tags":[]},
+                           tags=Tag.query.all())
 
 
 @app.route("/users/<int:user_id>/posts/new", methods=["POST"])
@@ -120,33 +124,35 @@ def save_new_post_then_redirect(user_id):
         to user details page """
     User.query.get_or_404(user_id)
 
-    post_title, post_content = get_post_data(request.form)
+    post_title, post_content, tag_list = get_post_data(request.form)
 
     if None in (post_title, post_content):
         flash("Posts must have both: title and content")
         return redirect(f'/users/{user_id}/posts/new')
-    post = Post(title=post_title, content=post_content, user_id=user_id)
 
+    post = Post(title=post_title, content=post_content, user_id=user_id)
     db.session.add(post)
     db.session.commit()
 
-    return redirect(f"/users/{user_id}")
+    if tag_list is not None:
+        post.tags = [Tag.query.filter_by(name=tag_name) for tag_name in tag_list]
 
-########## Post Routes ##########
+    db.session.commit()
+    return redirect(f"/users/{user_id}")
 
 
 @app.route("/posts/<int:post_id>")
 def show_post_details(post_id):
     """ Shows the details about the post """
     post = Post.query.get_or_404(post_id)
-    return render_template("post_detail.html", post=post)
+    return render_template("post_detail.html", post=post, tags=post.tags)
 
 
 @app.route("/posts/<int:post_id>/edit")
 def show_post_edit_form(post_id):
     """ Shows the edit form for the posts """
     post = Post.query.get_or_404(post_id)
-    return render_template("post_edit.html", post=post)
+    return render_template("post_edit.html", post=post, tags=Tag.query.all())
 
 
 @app.route("/posts/<int:post_id>/edit", methods=['POST'])
@@ -154,11 +160,27 @@ def save_post_edits_then_redirect(post_id):
     """ Edits the post then redirect to post details """
     post = Post.query.get_or_404(post_id)
 
-    post.title, post.content = get_post_data(request.form)
+    post.title, post.content, tag_list = get_post_data(request.form)
+    print("Tag_list=", tag_list)
 
     if None in (post.title, post.content):
         flash("Posts must have a title and content")
         return redirect(f'/posts/{post_id}/edit')
+
+    db.session.commit()
+
+    # Loop through the tag_list
+    # Check if any of the tags have been unchecked
+    # Find the instance of the tag
+    # Check whether its already in the post.tags
+    # If not append the tag instance to post.tags
+    # post.tags.append(OUR TAG INSTANCE)
+
+    if tag_list is not None:
+        post.tags = [Tag.query.filter_by(name=tag_name).one() for tag_name in tag_list]
+
+    # for tag_name in tag_list:
+    #     tag = Tag.query.filter_by()
 
     db.session.commit()
 
@@ -208,13 +230,21 @@ def save_new_tag_then_redirect():
         flash("Cannot create empty tag. ")
         return redirect("/tags/{tag_id}/edit")
 
-    if Tag.filter_by(name=tag_name):
-        flash("Cannot create duplicate tag.")
-        return redirect("/tags/new")
+    # Tried to filter out duplicate tags but didnt work
+    # if Tag.query.filter(Tag.name==tag_name):
+    #     flash("Cannot create duplicate tag.")
+    #     return redirect("/tags/new")
 
     tag = Tag(name=tag_name)
     db.session.add(tag)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except db.IntegrityError:
+        db.session.rollback()
+        flash('Cannot create a duplicate tag.')
+        return redirect("/tags/new")
+
     return redirect("/tags")
 
 
@@ -239,9 +269,10 @@ def save_tag_edits_then_redirect(tag_id):
         flash("Cannot create empty tag. ")
         return redirect("/tags/{tag_id}/edit")
 
-    if Tag.filter_by(name=tag_name):
-        flash("Cannot create duplicate tag.")
-        return redirect("/tags/{tag_id}/edit")
+    # Tried to filter out duplicate tags but didnt work
+    # if Tag.query.filter(Tag.name==tag_name):
+    #     flash("Cannot create duplicate tag.")
+    #     return redirect("/tags/new")
 
     tag.name = tag_name
     db.session.commit()
@@ -276,11 +307,13 @@ def get_post_data(post_data):
     """ Grab post form data and return as a list. """
     post_title = post_data.get('post_title') or None
     post_content = post_data.get('post_content') or None
+    tags = post_data.getlist('tags') or None
 
     return [post_title,
-            post_content]
+            post_content,
+            tags]
 
 
 def get_tag_data(tag_data):
     """ Grab tag form data and return. """
-    return tag_data.get('post_title') or None
+    return tag_data.get('tag_name') or None
