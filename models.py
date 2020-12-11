@@ -65,7 +65,8 @@ class Tag(db.Model):
                    primary_key=True,
                    autoincrement=True)
     name = db.Column(db.String(15),
-                     nullable=False)
+                     nullable=False,
+                     unique=True)
 
 
 class PostTag(db.Model):

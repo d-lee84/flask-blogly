@@ -2,7 +2,7 @@
 
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, request, redirect, render_template, flash
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -97,6 +97,8 @@ def delete_user_then_redirect(user_id):
     if user.posts:
         flash("Cannot delete user with posts.")
         return redirect(f"/users/{user_id}")
+    flash(f"Deleted user: {user.first_name} {user.last_name}")
+
     db.session.delete(user)
     db.session.commit()
     return redirect("/users")
@@ -132,6 +134,7 @@ def save_new_post_then_redirect(user_id):
 
 ########## Post Routes ##########
 
+
 @app.route("/posts/<int:post_id>")
 def show_post_details(post_id):
     """ Shows the details about the post """
@@ -166,13 +169,96 @@ def save_post_edits_then_redirect(post_id):
 def delete_post_then_redirect(post_id):
     """ Delete the post then redirect to the user details """
     post = Post.query.get_or_404(post_id)
-
+    flash(f"Deleted Post: {post.title}")
     db.session.delete(post)
     db.session.commit()
 
     return redirect(f"/users/{post.user_id}")
 
+########## Tag Routing ##########
 
+
+@app.route("/tags")
+def show_tag_list():
+    """ Shows list of all tags """
+    tags = Tag.query.all()
+    return render_template("tag_listing.html", tags=tags)
+
+
+@app.route("/tags/<int:tag_id>")
+def show_tag_details(tag_id):
+    """ Shows the details about the tag """
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template("tag_detail.html", tag=tag)
+
+
+@app.route("/tags/new")
+def show_new_tag_form():
+    """ Shows the tag creation form """
+    return render_template("new_tag.html")
+
+
+@app.route("/tags/new", methods=["POST"])
+def save_new_tag_then_redirect():
+    """ Saves a new tag then redirects
+        to the tags list """
+    tag_name = get_tag_data(request.form)
+
+    if tag_name is None:
+        flash("Cannot create empty tag. ")
+        return redirect("/tags/{tag_id}/edit")
+
+    if Tag.filter_by(name=tag_name):
+        flash("Cannot create duplicate tag.")
+        return redirect("/tags/new")
+
+    tag = Tag(name=tag_name)
+    db.session.add(tag)
+    db.session.commit()
+    return redirect("/tags")
+
+
+@app.route("/tags/<int:tag_id>/edit")
+def show_edit_tag_form(tag_id):
+    """ Shows edit tag form """
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template("tag_detail.html", tag=tag)
+
+
+@app.route("/tags/<int:tag_id>/edit", methods=["POST"])
+def save_tag_edits_then_redirect(tag_id):
+    """ Shows the details about the post """
+    tag = Tag.query.get_or_404(tag_id)
+
+    tag_name = get_tag_data(request.form)
+    if tag.name == tag_name:
+        flash("No changes have been made.")
+        return redirect(f"/tags/{tag_id}", tag=tag)
+
+    if tag_name is None:
+        flash("Cannot create empty tag. ")
+        return redirect("/tags/{tag_id}/edit")
+
+    if Tag.filter_by(name=tag_name):
+        flash("Cannot create duplicate tag.")
+        return redirect("/tags/{tag_id}/edit")
+
+    tag.name = tag_name
+    db.session.commit()
+    return redirect(f"/tags/{tag_id}", tag=tag)
+
+
+@app.route("/tags/<int:tag_id>/delete", methods=["POST"])
+def delete_tag_then_redirect(tag_id):
+    """ Deletes tag """
+    tag = Tag.get_or_404(tag_id)
+    flash(f"Deleted tag: {tag.name}")
+    db.session.delete(tag)
+    db.session.commit()
+    return redirect("/tags")
+
+
+########## Helper methods ##########
 def get_user_data(user_data):
     """ Grab user form data and return as a list. """
     first_name = user_data.get('first_name') or None
@@ -193,3 +279,8 @@ def get_post_data(post_data):
 
     return [post_title,
             post_content]
+
+
+def get_tag_data(tag_data):
+    """ Grab tag form data and return. """
+    return tag_data.get('post_title') or None
