@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="card-title">Edit a tag</h1>
+
+<form action="/tags/{{ tag.id }}/edit" method="POST">
+    <label for="tag_name">Name</label>
+    <input id="tag_name" name="tag_name" type="text" required value="{{ tag.name }}"
+        placeholder="Enter a name for the tag" maxlength="15">
+
+
+    <a href="/tags/{{ tag.id }}" class="btn btn-outline-info">Cancel</a>
+    <button type="submit" class="btn btn-success">Add</button>
+</form>
+
+{% endblock %}
+

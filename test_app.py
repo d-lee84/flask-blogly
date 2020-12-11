@@ -113,7 +113,7 @@ class BloglyTestCase(TestCase):
             self.assertIn('value="Stark"', html)
 
     def test_new_post_form(self):
-        """  """
+        """ Tests whether the new post form appears correctly  """
         with app.test_client() as client:
             response = client.get(f'/users/{self.test_user_id}/posts/new')
 
@@ -123,6 +123,7 @@ class BloglyTestCase(TestCase):
             self.assertIn('post_content', html)
 
     def test_post_create(self):
+        """ Tests the creation of a post """
         with app.test_client() as client:
             response = client.post(f'/users/{self.test_user_id}/posts/new',
                                    data={
@@ -138,6 +139,7 @@ class BloglyTestCase(TestCase):
             self.assertIn('Tony Stark', html)
 
     def test_post_edit(self):
+        """ Tests the editing of a post """
         with app.test_client() as client:
             response = client.post(f'/posts/{self.test_post2.id}/edit',
                                    data={

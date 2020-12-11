@@ -49,3 +49,33 @@ class Post(db.Model):
                         db.ForeignKey("users.id"),
                         nullable=False)
     user = db.relationship('User')
+
+    tags = db.relationship('Tag',
+                           secondary="posts_tags",
+                           bref="posts")
+
+
+class Tag(db.Model):
+    """ Tags that can be placed with
+        posts in the blog website """
+
+    __tablename__ = "tags"
+
+    id = db.Column(db.Integer,
+                   primary_key=True,
+                   autoincrement=True)
+    name = db.Column(db.String(15),
+                     nullable=False)
+
+
+class PostTag(db.Model):
+    """ A table that keeps track of all the posts and tags """
+
+    __tablename__ = "posts_tags"
+
+    post_id = db.Column(db.Integer,
+                        db.ForeignKey('posts.id'),
+                        primary_key=True)
+    tag_id = db.Column(db.Integer,
+                       db.ForeignKey('tags.id'),
+                       primary_key=True)

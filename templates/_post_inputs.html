@@ -5,3 +5,8 @@
 <label for="post_content">Post Content</label>
 <textarea id="post_content" name="post_content" rows="5" cols="33"
     placeholder="Enter the content of your post."> {{ post.content }} </textarea>
+
+{% for tag in tags %}
+<input type="checkbox" name="{{ tag.name }}" id="{{ tag.name }}">
+<label for="{{ tag.name }}">{{ tag.name }}</label>
+{% endfor %}
