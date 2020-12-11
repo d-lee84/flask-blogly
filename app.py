@@ -2,7 +2,7 @@
 
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, request, redirect, render_template, flash
-# from flask_sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, Post, Tag
 
 app = Flask(__name__)
@@ -179,9 +179,6 @@ def save_post_edits_then_redirect(post_id):
     if tag_list is not None:
         post.tags = [Tag.query.filter_by(name=tag_name).one() for tag_name in tag_list]
 
-    # for tag_name in tag_list:
-    #     tag = Tag.query.filter_by()
-
     db.session.commit()
 
     return redirect(f"/posts/{post_id}")
@@ -252,7 +249,7 @@ def save_new_tag_then_redirect():
 def show_edit_tag_form(tag_id):
     """ Shows edit tag form """
     tag = Tag.query.get_or_404(tag_id)
-    return render_template("tag_detail.html", tag=tag)
+    return render_template("tag_edit.html", tag=tag)
 
 
 @app.route("/tags/<int:tag_id>/edit", methods=["POST"])
@@ -276,7 +273,7 @@ def save_tag_edits_then_redirect(tag_id):
 
     tag.name = tag_name
     db.session.commit()
-    return redirect(f"/tags/{tag_id}", tag=tag)
+    return redirect(f"/tags/{tag_id}")
 
 
 @app.route("/tags/<int:tag_id>/delete", methods=["POST"])

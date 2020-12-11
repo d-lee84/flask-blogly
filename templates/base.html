@@ -10,11 +10,15 @@
 </head>
 
 <body>
-    <main class="d-flex justify-content-center">
+    <main class="d-flex justify-content-center ">
 
-        <div class="mt-4 card col-8">
+        <div class="row m-4">
+            <div class="card col-7">
+                <h2> <a href="/">Blogly!</a></h2>
+            </div>
+        <div class="card col-7">
             {% for msg in get_flashed_messages() %}
-                <div class="alert-danger alert">{{ msg }}</div>
+            <div class="alert-danger alert">{{ msg }}</div>
             {% endfor %}
 
             <div class="card-body col">
@@ -22,6 +26,7 @@
                 {% endblock %}
             </div>
         </div>
+    </div>
 
     </main>
 </body>
