@@ -2,9 +2,10 @@
 
 {% block form_header %}
     <h1 class="card-title">Create a user</h1>
+    <div class="col-7">
     <form action="/users/new"  method="POST">
 {% endblock %}
 
 {% block buttons %}
-    <button type="submit">Add</button>
+    <button class="btn btn-success" type="submit">Add</button>
 {% endblock %}

@@ -135,7 +135,10 @@ def save_new_post_then_redirect(user_id):
     db.session.commit()
 
     if tag_list is not None:
-        post.tags = [Tag.query.filter_by(name=tag_name) for tag_name in tag_list]
+        print(f"\n\ntag_list: {tag_list}")
+        post.tags = (
+            [Tag.query.filter_by(name=tag_name) for tag_name in tag_list])
+
 
     db.session.commit()
     return redirect(f"/users/{user_id}")

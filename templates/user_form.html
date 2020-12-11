@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
+
     {% block form_header %}
 
     {% endblock %}
+
     <label for="first_name">First Name</label>
     <input id="first_name" name="first_name" type="text" value="{{ user.first_name }}" required placeholder="Enter a First Name" maxlength="50">
 
@@ -14,6 +15,6 @@
     <label for="img_url">Image URL:</label>
     <input name="img_url" type="text" value="{{ user.image_url }}" placeholder="Provide an image of this user">
     {% block buttons %}{% endblock %}
-</form>
+</form></div>
 
 {% endblock %}

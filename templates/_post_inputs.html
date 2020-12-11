@@ -4,10 +4,10 @@
 
 <label for="post_content">Post Content</label>
 <textarea id="post_content" name="post_content" rows="5" cols="33"
-    placeholder="Enter the content of your post."> {{ post.content }} </textarea>
+    placeholder="Enter the content of your post."> {{ post.content }} </textarea><br>
 
 {% for tag in tags %}
-<input type="checkbox" name="tags" id="{{ tag.name }}" 
+<input type="checkbox" name="tags" id="{{ tag.name }}"
     value="{{ tag.name }}" {% if tag in post.tags %} checked {% endif %}>
 <label for="{{ tag.name }}">{{ tag.name }}</label>
-{% endfor %}
+{% endfor %} <br>
